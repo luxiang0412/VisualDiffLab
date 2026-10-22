@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.26100.0</TargetPlatformMinVersion>
+    <SupportedOSPlatformVersion>10.0.26100.0</SupportedOSPlatformVersion>
+    <RootNamespace>VisualDiffLab.App</RootNamespace>
+    <AssemblyName>VisualDiffLab</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <WindowsPackageType Condition="'$(VisualDiffLabPackaged)' != 'true'">None</WindowsPackageType>
+    <GenerateAppxPackageOnBuild Condition="'$(VisualDiffLabPackaged)' == 'true'">true</GenerateAppxPackageOnBuild>
+    <AppxPackageSigningEnabled Condition="'$(VisualDiffLabPackaged)' == 'true'">false</AppxPackageSigningEnabled>
+    <AppxBundle Condition="'$(VisualDiffLabPackaged)' == 'true'">Never</AppxBundle>
+    <AppxPackageDir Condition="'$(VisualDiffLabPackaged)' == 'true'">$(MSBuildThisFileDirectory)../../artifacts/msix/</AppxPackageDir>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <SelfContained>true</SelfContained>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+    <PackageReference Include="Microsoft.Graphics.Win2D" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisualDiffLab.Core\VisualDiffLab.Core.csproj" />
+    <ProjectReference Include="..\VisualDiffLab.Imaging\VisualDiffLab.Imaging.csproj" />
+    <ProjectReference Include="..\VisualDiffLab.Rendering\VisualDiffLab.Rendering.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\AppIcon.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Assets\*.png" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Localization\*.json" />
+    <Content Include="Package.appxmanifest" Condition="'$(VisualDiffLabPackaged)' == 'true'" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,24 @@
+# Visual Diff Lab license
+
+Copyright (c) 2026 Visual Diff Lab contributors
+
+## LICENSE NOT YET SELECTED
+
+The project owner has not yet chosen an open-source license for this repository.
+This file is intentionally **not** an open-source license and grants no rights to
+copy, modify, distribute or use the code beyond what applicable law allows.
+
+The development brief explicitly reserves the license choice for the project owner.
+Until a license is added by the owner, treat this repository as “all rights reserved”
+and do not publish binaries or source under an assumed license.
+
+See `docs/decisions/DEFERRED.md` and `docs/reports/release-readiness.md` for the
+release blocker this creates.
+
+Third-party components keep their own licenses:
+
+- Microsoft Windows App SDK — Microsoft license terms (NuGet package `license.txt`)
+- Microsoft.Graphics.Win2D — Microsoft license terms (NuGet package metadata)
+- xUnit / xunit.runner.visualstudio — Apache-2.0
+- Microsoft.NET.Test.Sdk — MIT
+- FlaUI (test-only) — MIT

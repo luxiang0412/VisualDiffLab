@@ -1,0 +1,96 @@
+name: Bug report
+description: Report a defect in Visual Diff Lab
+title: "[Bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach private screenshots, credentials, full file paths or proprietary UI.
+        Recreate the problem with synthetic images where possible. Security issues must be
+        reported privately (see SECURITY.md), not in a public issue.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open image A ...
+        2. Switch to Heatmap ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version / build
+      placeholder: 0.1.0 (source commit or MSIX version)
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Windows version and build
+      placeholder: Windows 11 25H2, build 26200
+    validations:
+      required: true
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme
+      options: [System, Light, Dark]
+  - type: input
+    id: dpi
+    attributes:
+      label: Display scaling / DPI
+      placeholder: 200% (or 96 DPI equivalent)
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Import / file handling
+        - Side-by-side
+        - Wipe
+        - Overlay
+        - Heatmap
+        - Zoom / pan / fit
+        - Threshold / statistics
+        - Ignore regions / undo
+        - Export
+        - Theme / accessibility
+        - Performance
+        - Packaging / install
+        - Other
+  - type: textarea
+    id: logs
+    attributes:
+      label: Diagnostics log excerpt (optional)
+      description: |
+        From %LOCALAPPDATA%\VisualDiffLab\logs\app.log. Remove anything you consider private;
+        the app itself does not log file paths or pixels.
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I did not include private images, credentials or personal paths.
+          required: true

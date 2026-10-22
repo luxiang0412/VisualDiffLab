@@ -1,0 +1,43 @@
+name: Feature request
+description: Propose a change to Visual Diff Lab
+title: "[Feature] "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project has a deliberately small MVP scope. Browser automation, AI analysis,
+        cloud/accounts, batch folders, video, plugin systems and automatic registration are
+        explicit non-goals. Proposals outside the MVP need a product decision first.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Which user workflow is blocked or painful today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Does this fit the current MVP scope?
+      options:
+        - Yes — refine an existing MVP feature
+        - No — requires a product decision
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or references
+      description: Screenshots, comparable tools, performance considerations.

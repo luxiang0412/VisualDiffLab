@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.26100.0</TargetPlatformMinVersion>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>VisualDiffLab.Benchmark</RootNamespace>
+    <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);CA1305;CA1869</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\VisualDiffLab.Core\VisualDiffLab.Core.csproj" />
+    <ProjectReference Include="..\..\src\VisualDiffLab.Imaging\VisualDiffLab.Imaging.csproj" />
+  </ItemGroup>
+</Project>

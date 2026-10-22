@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET SDK (pinned by global.json)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.402'
+
+      - name: Validate localization resources
+        run: python scripts/validate-localization.py
+
+      - name: Restore
+        run: dotnet restore VisualDiffLab.sln -p:Platform=x64
+
+      - name: Build solution (Release)
+        run: dotnet build VisualDiffLab.sln -c Release --no-restore -p:Platform=x64
+
+      - name: Build unpackaged app (Release, x64)
+        run: dotnet build src/VisualDiffLab.App/VisualDiffLab.App.csproj -c Release --no-restore -p:Platform=x64 -r win-x64
+
+      - name: Core tests
+        run: dotnet test tests/VisualDiffLab.Core.Tests -c Release --no-build -p:Platform=x64 --logger "trx;LogFileName=core-tests.trx" --results-directory artifacts/test-results
+
+      - name: Imaging tests
+        run: dotnet test tests/VisualDiffLab.Imaging.Tests -c Release --no-build -p:Platform=x64 --logger "trx;LogFileName=imaging-tests.trx" --results-directory artifacts/test-results
+
+      - name: Rendering tests
+        run: dotnet test tests/VisualDiffLab.Rendering.Tests -c Release --no-build -p:Platform=x64 --logger "trx;LogFileName=rendering-tests.trx" --results-directory artifacts/test-results
+
+      # UI automation is intentionally not run on hosted runners: it needs an interactive
+      # desktop, input injection and the native file dialog. See .github/workflows/ui-tests.yml.
+
+      - name: Dependency audit
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          dotnet list VisualDiffLab.sln package --vulnerable --include-transitive |
+            Tee-Object artifacts/dependency-audit.txt
+          if (Select-String -Path artifacts/dependency-audit.txt -Pattern 'has the following vulnerable packages' -Quiet) {
+            Write-Error "Vulnerable NuGet packages were reported."
+            exit 1
+          }
+          "`n=== Outdated (informational) ===" | Tee-Object -FilePath artifacts/dependency-audit.txt -Append
+          dotnet list VisualDiffLab.sln package --outdated |
+            Tee-Object -FilePath artifacts/dependency-audit.txt -Append
+
+      - name: Upload test results and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-and-audit
+          path: |
+            artifacts/test-results/**
+            artifacts/dependency-audit.txt
+
+  package-msix:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.402'
+      - name: Build unsigned MSIX
+        run: dotnet build src/VisualDiffLab.App/VisualDiffLab.App.csproj -c Release -p:Platform=x64 -r win-x64 -p:VisualDiffLabPackaged=true
+      - name: Upload MSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff-lab-msix-unsigned
+          path: artifacts/msix/**/*.msix

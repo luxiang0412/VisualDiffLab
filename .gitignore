@@ -1,0 +1,19 @@
+# Build outputs
+bin/
+obj/
+.vs/
+TestResults/
+AppPackages/
+
+# Local artifacts. Screenshots/performance reports are reviewable evidence; environment
+# logs and TRX files contain local machine paths and stay untracked.
+artifacts/*
+!artifacts/acceptance/
+!artifacts/performance/
+
+# User/IDE files
+*.user
+*.suo
+*.pfx
+*.msix
+*.msixupload

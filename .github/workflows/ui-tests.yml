@@ -1,0 +1,49 @@
+name: UI automation (self-hosted desktop)
+
+# WinUI 3 UI automation needs an interactive Windows desktop, a real window, mouse/
+# keyboard input and the native Save As dialog. Hosted GitHub runners do not provide
+# this reliably. Run this workflow only on a dedicated self-hosted Windows machine
+# (Developer Mode not required, but the desktop must be unlocked) whose labels include
+# self-hosted, windows, x64 and desktop.
+#
+# This workflow is optional and is intentionally NOT part of the default CI gate.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ui-tests:
+    runs-on: [self-hosted, windows, x64, desktop]
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      VDL_APP_CONFIG: Release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.402'
+
+      - name: Build app and UI tests
+        run: |
+          dotnet build src/VisualDiffLab.App/VisualDiffLab.App.csproj -c Release -p:Platform=x64 -r win-x64
+          dotnet build tests/VisualDiffLab.UITests/VisualDiffLab.UITests.csproj -c Debug -p:Platform=x64
+
+      - name: Generate fixtures
+        run: python scripts/generate-test-images.py
+
+      - name: Run UI automation
+        run: dotnet test tests/VisualDiffLab.UITests/VisualDiffLab.UITests.csproj -c Debug -p:Platform=x64 --logger "trx;LogFileName=ui-tests.trx" --results-directory artifacts/test-results
+
+      - name: Upload UI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-evidence
+          path: |
+            artifacts/test-results/**
+            artifacts/acceptance/**
+            artifacts/performance/**
